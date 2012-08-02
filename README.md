@@ -14,6 +14,8 @@ The parameters passed to the agent include:
 
 ## Build Instructions
 
+The build uses [Gradle](http://gradle.org/) which means you don't have to do much, just run:
+
     ./gradlew clean build
 
 ## HowTo
