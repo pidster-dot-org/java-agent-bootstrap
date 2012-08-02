@@ -2,7 +2,7 @@
 
 This project provides a generic [Java Agent](http://docs.oracle.com/javase/6/docs/api/java/lang/instrument/package-summary.html "Oracle JavaDocs for the Instrumentation package").
 
-The [Attach API](http://docs.oracle.com/javase/6/docs/jdk/api/attach/spec/com/sun/tools/attach/package-summary.html) is used to connect to the running JVM process and launch the agent.
+The [Attach API](http://docs.oracle.com/javase/6/docs/jdk/api/attach/spec/com/sun/tools/attach/package-summary.html) can be used to connect to the running JVM process and launch the agent, or the standard mechanism for specifying a Java Agent can be used.
 
 The agent will start a configurable, specific thread instance inside the running JVM.  This is useful for attaching monitoring components to an existing Java process.
 
