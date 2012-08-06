@@ -109,11 +109,11 @@ def configurePom(def pom) {
         }
 
         scm {
-            connection 'scm:https://pidster@github.com/purplefox/java-agent-bootstrap.git'
-            developerConnection 'scm:git@github.com:pidster/java-agent-bootstrap.git'
-            url 'https://github.com/pidster/java-agent-bootstrap'
+            connection "scm:https://pidster@github.com/pidster/${rootProject.name}.git"
+            developerConnection "scm:git@github.com:pidster/${rootProject.name}.git"
+            url "https://github.com/pidster/$rootProject.name"
         }
-        
+
         licenses {
             license {
                 name 'The Apache Software License, Version 2.0'

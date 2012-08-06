@@ -17,7 +17,7 @@
 package org.pidster.java.lang.instrument;
 
 /**
- * @author <a href="http://pidster.com/">pidster</a>
+ * @author <a href="http://pidster.org/">pidster</a>
  *
  */
 public class AgentInstallationException extends RuntimeException {

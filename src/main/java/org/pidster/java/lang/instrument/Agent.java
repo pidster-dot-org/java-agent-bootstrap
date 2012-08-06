@@ -29,7 +29,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * @author <a href="http://pidster.com/">pidster</a>
+ * @author <a href="http://pidster.org/">pidster</a>
  *
  */
 public class Agent {

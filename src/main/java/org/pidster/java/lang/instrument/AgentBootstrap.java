@@ -19,7 +19,7 @@ package org.pidster.java.lang.instrument;
 import java.lang.instrument.Instrumentation;
 
 /**
- * @author <a href="http://pidster.com/">pidster</a>
+ * @author <a href="http://pidster.org/">pidster</a>
  *
  */
 public interface AgentBootstrap {
