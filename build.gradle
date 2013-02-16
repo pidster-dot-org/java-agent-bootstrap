@@ -15,7 +15,7 @@
  */
 
 def javaHome = System.getenv('JAVA_HOME') ?: System.getProperty('java.home')
-if (javaHome.matches('/jre\\d$')) javaHome = javaHome.replaceAll('/jre\\d$', '')
+javaHome = javaHome.replaceFirst('/jre\\d*$', '')
 
 apply plugin: 'eclipse'
 apply plugin: 'java'
@@ -24,9 +24,6 @@ apply from: 'gradle/maven.gradle'
 apply from: 'gradle/setup.gradle'
 
 repositories {
-    flatDir {
-        dirs file("$javaHome/lib")
-    }
     mavenCentral()
 }
 
@@ -37,7 +34,9 @@ dependencies {
 
 sourceCompatibility = '1.6'
 targetCompatibility = '1.6'
+
 mainClassName = 'org.pidster.java.lang.instrument.Attacher'
+
 startScripts.classpath += files("$javaHome/lib/tools.jar")
 startScripts.applicationName = 'inject'
 
@@ -59,6 +58,5 @@ jar {
 }
 
 test {
-    classpath = files('build/classes/test')
     testLogging.showStandardStreams = true
 }
