@@ -19,7 +19,7 @@ package org.pidster.java.lang.instrument;
  * @author <a href="http://pidster.org/">pidster</a>
  *
  */
-public class TargetClassInstantiationException extends RuntimeException {
+public class TargetClassInstantiationException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
@@ -29,6 +29,10 @@ public class TargetClassInstantiationException extends RuntimeException {
 
     public TargetClassInstantiationException(Throwable thrown) {
         super(thrown);
+    }
+
+    public TargetClassInstantiationException(String message) {
+        super(message);
     }
 
 }

@@ -40,6 +40,12 @@ public class Agent {
 
     private static final Logger LOG = Logger.getLogger(Agent.class.getName());
 
+    private final String agentArgs;
+
+    private final Instrumentation instrumentation;
+
+    private final boolean preStarted;
+
     /**
      * @param agentArgs
      * @param instrumentation
@@ -62,6 +68,27 @@ public class Agent {
      * @param preStarted
      */
     private static void internal(String agentArgs, Instrumentation instrumentation, boolean preStarted) {
+        Agent agent = new Agent(agentArgs, instrumentation, preStarted);
+        agent.load();
+    }
+
+    /**
+     * @param agentArgs
+     * @param instrumentation
+     * @param preStarted
+     */
+    public Agent(String agentArgs, Instrumentation instrumentation, boolean preStarted) {
+        this.agentArgs = agentArgs;
+        this.instrumentation = instrumentation;
+        this.preStarted = preStarted;
+    }
+
+    /**
+     * @param agentArgs
+     * @param instrumentation
+     * @param preStarted
+     */
+    private void load() {
 
         Map<String, String> args = new HashMap<String, String>();
 
@@ -76,10 +103,10 @@ public class Agent {
 
         try {
             
-            String threadClass = args.get(AGENT_PARAM_THREAD);
+            String runnableClass = args.get(AGENT_PARAM_THREAD);
 
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-            Thread t = instantiateThreadClass(args, threadClass, tccl);
+            Thread t = instantiateThreadClass(args, runnableClass, tccl);
             // Restore original ClassLoader
             Thread.currentThread().setContextClassLoader(tccl);
 
@@ -94,14 +121,14 @@ public class Agent {
                 t.start();
             }
 
-            System.out.printf("Injected class %s via javaagent %s with arguments %s %n", threadClass, Agent.class.getName(), agentArgs);
+            System.out.printf("Injected class %s via javaagent %s with arguments %s %n", runnableClass, Agent.class.getName(), agentArgs);
 
         } catch (Exception e) {
             throw new AgentInstallationException(e);
         }
     }
 
-    private static Thread instantiateThreadClass(Map<String, String> args, String threadClass, ClassLoader tccl) {
+    private Thread instantiateThreadClass(Map<String, String> args, String threadClass, ClassLoader tccl) throws TargetClassInstantiationException {
 
         try {
             URL[] urls = getClassLoaderURLs(args);
@@ -109,13 +136,24 @@ public class Agent {
             ClassLoader cl = new URLClassLoader(urls, tccl);
             Thread.currentThread().setContextClassLoader(cl);
 
+            Thread t;
             Class<?> c = cl.loadClass(threadClass);
-            Class<? extends Thread> tc = c.asSubclass(Thread.class);
+            if (Thread.class.isAssignableFrom(c)) {
+                Class<? extends Thread> tc = c.asSubclass(Thread.class);
+                t = tc.newInstance();
+            }
+            else if (Runnable.class.isAssignableFrom(c)) {
+                Class<? extends Runnable> rc = c.asSubclass(Runnable.class);
+                Runnable r = rc.newInstance();
+                t = new Thread(r);
+            }
+            else {
+                throw new TargetClassInstantiationException("Not a runnable or Thread");
+            }
 
-            Thread t = tc.newInstance();
-            t.setContextClassLoader(cl);
             // NB If this isn't a daemon, we can hold up shutdown.
             t.setDaemon(true);
+            t.setContextClassLoader(cl);
 
             return t;
 
@@ -132,7 +170,7 @@ public class Agent {
      * @param args
      * @return URLs
      */
-    private static URL[] getClassLoaderURLs(Map<String, String> args) {
+    private URL[] getClassLoaderURLs(Map<String, String> args) {
         Set<URL> urlSet = new HashSet<URL>();
 
         if (args.containsKey(AGENT_PARAM_LIBS)) {

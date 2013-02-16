@@ -109,9 +109,9 @@ def configurePom(def pom) {
         }
 
         scm {
-            connection "scm:https://pidster@github.com/pidster/${rootProject.name}.git"
-            developerConnection "scm:git@github.com:pidster/${rootProject.name}.git"
-            url "https://github.com/pidster/$rootProject.name"
+            connection "scm:git://github.com/pidster-dot-org/${rootProject.name}.git"
+            developerConnection "scm:git@github.com:pidster-dot-org/${rootProject.name}.git"
+            url "https://github.com/pidster-dot-org/$rootProject.name"
         }
 
         licenses {
