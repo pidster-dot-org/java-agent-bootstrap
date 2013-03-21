@@ -17,20 +17,17 @@
 package org.pidster.java.lang.instrument;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import com.sun.tools.attach.AgentInitializationException;
-import com.sun.tools.attach.AgentLoadException;
-import com.sun.tools.attach.AttachNotSupportedException;
-import com.sun.tools.attach.VirtualMachine;
 
 /**
  * @author <a href="http://pidster.org/">pidster</a>
  *
  */
 public class Attacher {
+
+    private static final String COM_SUN_TOOLS_ATTACH_VIRTUAL_MACHINE = "com.sun.tools.attach.VirtualMachine";
 
     private static final Logger LOG = Logger.getLogger(Attacher.class.getName());
 
@@ -43,7 +40,7 @@ public class Attacher {
 
         String pid = args[0];
         String javaAgentProps = args[1];
-        
+
         if (!args[1].startsWith("-javaagent=")) {
             LOG.log(Level.SEVERE, "Parameter formatting error: " + javaAgentProps);
             usage();
@@ -56,10 +53,10 @@ public class Attacher {
         LOG.log(Level.INFO, "PID: " + pid);
         LOG.log(Level.INFO, "Agent+props: " + javaAgentProps);
 
-        VirtualMachine machine = null;
+        Object machine = null;
 
         try {
-            machine = VirtualMachine.attach(pid);
+            machine = Reflector.invokeStatic(COM_SUN_TOOLS_ATTACH_VIRTUAL_MACHINE, "attach", pid);
             int index = agent.indexOf(".jar=");
             if (index > -1) {
                 String iagent = agent.substring(0, index + 4);
@@ -72,29 +69,24 @@ public class Attacher {
 
                 validate(props);
 
-                machine.loadAgent(agent, props);
+                Reflector.invoke(machine, "loadAgent", agent, props);
             }
             else {
                 agent = normalize(agent);
-                machine.loadAgent(agent);
+                Reflector.invoke(machine, "loadAgent", agent);
             }
 
-            machine.getSystemProperties().setProperty("agent.user.dir", System.getProperty("user.dir"));
+            Properties systemProperties = Reflector.invoke(machine, "getSystemProperties");
+            systemProperties.setProperty("agent.user.dir", System.getProperty("user.dir"));
 
-        } catch (AttachNotSupportedException e) {
-            LOG.log(Level.SEVERE, "Unable to load agent: " + agent, e);
-        } catch (IOException e) {
-            LOG.log(Level.SEVERE, "Unable to load agent: " + agent, e);
-        } catch (AgentLoadException e) {
-            LOG.log(Level.SEVERE, "Unable to load agent: " + agent, e);
-        } catch (AgentInitializationException e) {
+        } catch (ReflectorException e) {
             LOG.log(Level.SEVERE, "Unable to load agent: " + agent, e);
         }
         finally {
             if (machine != null)
                 try {
-                    machine.detach();
-                } catch (IOException e) {
+                    Reflector.invoke(machine, "detach");
+                } catch (ReflectorException e) {
                     LOG.log(Level.WARNING, "Exception when detaching from VirtualMachine", e);
                 }
         }

@@ -28,7 +28,6 @@ repositories {
 }
 
 dependencies {
-    compile files("$javaHome/lib/tools.jar")
     testCompile "junit:junit:$junitVersion"
 }
 
