@@ -49,9 +49,19 @@ public class Reflector {
             Constructor<?> constructor = clazz.getConstructor(argTypes);
             return constructor.newInstance(constructorArgs);
 
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+        } catch (ClassNotFoundException e) {
             throw new ReflectorException("Class handling exception", e);
-        } catch (NoSuchMethodException | SecurityException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (InstantiationException e) {
+            throw new ReflectorException("Class handling exception", e);
+        } catch (IllegalAccessException e) {
+            throw new ReflectorException("Class handling exception", e);
+        } catch (NoSuchMethodException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (SecurityException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (IllegalArgumentException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (InvocationTargetException e) {
             throw new ReflectorException("Invocation exception", e);
         }
     }
@@ -78,9 +88,15 @@ public class Reflector {
             Method method = target.getClass().getMethod(methodName, parameterTypes);
             return (T) method.invoke(target, methodArgs);
 
-        } catch (NoSuchMethodException | SecurityException e) {
+        } catch (NoSuchMethodException e) {
             throw new ReflectorException("Method selection exception", e);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (SecurityException e) {
+            throw new ReflectorException("Method selection exception", e);
+        } catch (IllegalAccessException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (IllegalArgumentException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (InvocationTargetException e) {
             throw new ReflectorException("Invocation exception", e);
         }
     }
@@ -110,9 +126,17 @@ public class Reflector {
             Method method = clazz.getMethod(methodName, parameterTypes);
             return (T) method.invoke(null, methodArgs);
 
-        } catch (ClassNotFoundException | NoSuchMethodException | SecurityException e) {
+        } catch (ClassNotFoundException e) {
             throw new ReflectorException("Method selection exception", e);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+        } catch (NoSuchMethodException e) {
+            throw new ReflectorException("Method selection exception", e);
+        } catch (SecurityException e) {
+            throw new ReflectorException("Method selection exception", e);
+        } catch (IllegalAccessException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (IllegalArgumentException e) {
+            throw new ReflectorException("Invocation exception", e);
+        } catch (InvocationTargetException e) {
             throw new ReflectorException("Invocation exception", e);
         }
     }
