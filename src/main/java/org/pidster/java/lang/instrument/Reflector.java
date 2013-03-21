@@ -7,20 +7,17 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
 /**
  * @author pidster
  *
  */
 public class Reflector {
 
-    public static Object instance(@Nonnull String className, Object... constructorArgs) throws ReflectorException {
+    public static Object instance(String className, Object... constructorArgs) throws ReflectorException {
         return instance(className, constructorArgs);
     }
 
-    public static Object instance(@Nonnull String className, @Nullable ClassLoader loader, Object... constructorArgs) throws ReflectorException {
+    public static Object instance(String className, ClassLoader loader, Object... constructorArgs) throws ReflectorException {
 
         try {
             if (loader == null) {
@@ -67,7 +64,7 @@ public class Reflector {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T invoke(@Nonnull Object target, @Nonnull String methodName, Object... methodArgs) throws ReflectorException {
+    public static <T> T invoke(Object target, String methodName, Object... methodArgs) throws ReflectorException {
 
         try {
 
@@ -102,12 +99,12 @@ public class Reflector {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T invokeStatic(@Nonnull String className, @Nonnull String methodName, Object... methodArgs) throws ReflectorException {
+    public static <T> T invokeStatic(String className, String methodName, Object... methodArgs) throws ReflectorException {
         return (T) invokeStatic(className, null, methodName, methodArgs);
     }
 
     @SuppressWarnings("unchecked")
-    public static <T> T invokeStatic(@Nonnull String className, @Nullable ClassLoader loader, @Nonnull String methodName, Object... methodArgs) throws ReflectorException {
+    public static <T> T invokeStatic(String className, ClassLoader loader, String methodName, Object... methodArgs) throws ReflectorException {
 
         try {
             if (loader == null) {
